@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_DB: app
+      POSTGRES_PASSWORD: ${LOCAL_DB_PASSWORD:?Copy .env.example to .env first}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U app -d app]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  migrate:
+    build: .
+    image: anyship-loan-desk-local
+    command: [python, -m, app.migrate]
+    environment:
+      DATABASE_URL: postgresql://app:${LOCAL_DB_PASSWORD}@db:5432/app
+    depends_on:
+      db:
+        condition: service_healthy
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  web:
+    build: .
+    image: anyship-loan-desk-local
+    environment:
+      DATABASE_URL: postgresql://app:${LOCAL_DB_PASSWORD}@db:5432/app
+      PORT: "8080"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - 127.0.0.1:${LOCAL_PORT:-18086}:8080
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+volumes:
+  db-data: {}
