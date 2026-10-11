@@ -70,7 +70,7 @@ async function perform(action) {
 }
 byId("item-form").addEventListener("submit", event => {
   event.preventDefault(); const name = byId("item-name").value.trim(); const total = Number(byId("item-total").value);
-  perform(async () => { await request("/api/items", {method:"POST", body:JSON.stringify({name,total})}); byId("item-form").reset(); message(`${name}을 물품함에 추가했어요.`); });
+  perform(async () => { await request("/api/items", {method:"POST", body:JSON.stringify({name,total})}); byId("item-form").reset(); message(`물품함에 등록했어요: ${name}`); });
 });
 byId("loan-form").addEventListener("submit", event => {
   event.preventDefault(); const item_id = Number(byId("loan-item").value); const borrower = byId("borrower").value.trim();

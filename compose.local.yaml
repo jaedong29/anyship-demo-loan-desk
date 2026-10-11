@@ -17,7 +17,7 @@ services:
     image: anyship-loan-desk-local
     command: [python, -m, app.migrate]
     environment:
-      DATABASE_URL: postgresql://app:${LOCAL_DB_PASSWORD}@db:5432/app
+      DATABASE_URL: ${DATABASE_URL:?Copy .env.example to .env first}
     depends_on:
       db:
         condition: service_healthy
@@ -29,7 +29,7 @@ services:
     build: .
     image: anyship-loan-desk-local
     environment:
-      DATABASE_URL: postgresql://app:${LOCAL_DB_PASSWORD}@db:5432/app
+      DATABASE_URL: ${DATABASE_URL:?Copy .env.example to .env first}
       PORT: "8080"
     depends_on:
       migrate:
