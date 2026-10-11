@@ -1,24 +1,25 @@
-app: anyship-demo-loan-desk
+app: app-841b2fa1e86341a8b0fc
 source:
   repo: https://github.com/jaedong29/anyship-demo-loan-desk
+  commit: d4ec8c78b467664b36b7aa735520b8d38438368e
 build:
   dockerfile: Dockerfile
   runtime_hint: python3.12
 port: 8080
 healthcheck: /healthz
 ingress: public
-env: []
-backing_services:
-  - type: postgres
-    bind_as: DATABASE_URL
+env:
+- name: TEST_BASE_URL
+  secret: false
+  generate: false
+  value: http://127.0.0.1:18086
+backing_services: []
 workload:
   type: request-driven
-  scale_to_zero: false
+  scale_to_zero: true
   max_request_seconds: 10
   websocket: false
 processes:
   web:
     instances: 1
-release:
-  migrate: python -m app.migrate
 profile: dev
